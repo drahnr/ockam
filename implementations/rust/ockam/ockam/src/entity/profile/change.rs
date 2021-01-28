@@ -1,41 +1,22 @@
-// Variants of changes allowed in a change event.
-#[derive(Clone, Debug)]
-pub enum ProfileChange {}
+use crate::entity::profile::event_identifier::EventIdentifier;
+use crate::entity::profile::proof::ProfileChangeProof;
+use crate::entity::profile_change::ProfileChange;
 
-// Variants of proofs that are allowed on a change event.
-#[derive(Clone, Debug)]
-pub enum ProfileChangeProof {}
-
-#[derive(Clone, Debug)]
-pub struct Changes(Vec<ProfileChange>);
-
-impl AsRef<[ProfileChange]> for Changes {
-    fn as_ref(&self) -> &[ProfileChange] {
-        &self.0
-    }
-}
-
-impl Default for Changes {
-    fn default() -> Self {
-        Self::new(Vec::new())
-    }
-}
-
-impl Changes {
-    pub fn new(changes: Vec<ProfileChange>) -> Self {
-        Self(changes)
-    }
-}
+pub type Changes = Vec<ProfileChange>;
 
 #[derive(Clone, Debug)]
 pub struct ProfileChangeEvent {
+    identifier: EventIdentifier,
     changes: Changes,
     proofs: Vec<ProfileChangeProof>,
 }
 
 impl ProfileChangeEvent {
-    pub fn changes(&self) -> &[ProfileChange] {
-        self.changes.as_ref()
+    pub fn identifier(&self) -> &EventIdentifier {
+        &self.identifier
+    }
+    pub fn changes(&self) -> &Changes {
+        &self.changes
     }
     pub fn proofs(&self) -> &[ProfileChangeProof] {
         &self.proofs
@@ -43,8 +24,16 @@ impl ProfileChangeEvent {
 }
 
 impl ProfileChangeEvent {
-    pub fn new(changes: Changes, proofs: Vec<ProfileChangeProof>) -> Self {
-        ProfileChangeEvent { changes, proofs }
+    pub fn new(
+        identifier: EventIdentifier,
+        changes: Changes,
+        proofs: Vec<ProfileChangeProof>,
+    ) -> Self {
+        ProfileChangeEvent {
+            identifier,
+            changes,
+            proofs,
+        }
     }
 }
 
@@ -54,6 +43,10 @@ pub struct ProfileChangeHistory(Vec<ProfileChangeEvent>);
 impl ProfileChangeHistory {
     pub fn new(change_events: Vec<ProfileChangeEvent>) -> Self {
         Self(change_events)
+    }
+
+    pub fn push_event(&mut self, event: ProfileChangeEvent) {
+        self.0.push(event)
     }
 }
 

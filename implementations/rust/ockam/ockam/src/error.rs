@@ -3,6 +3,14 @@ use ockam_core::Error;
 #[derive(Clone, Copy, Debug)]
 pub enum OckamError {
     None,
+    BareError,
+    VerifyFailed,
+    InvalidInternalState,
+    InvalidProof,
+    ConsistencyError,
+    ComplexEventsAreNotSupported,
+    EventIdDoesntMatch,
+    EmptyChange,
 }
 
 impl OckamError {
